@@ -92,5 +92,4 @@ st.write("""
 - Spring vs. Fall trends show **higher/lower** enrollment in certain terms. Consider optimizing admission strategies.
 """)
 
-# Footer
-st.markdown("**📌 Data Source: University Records**")
+
