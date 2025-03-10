@@ -5,6 +5,9 @@ import plotly.express as px
 # Load the data
 df = pd.read_csv("university_student_dashboard_data.csv")
 
+st.write("Columns in CSV:", df.columns.tolist())
+
+
 # Strip spaces from column names
 df.columns = df.columns.str.strip()
 
