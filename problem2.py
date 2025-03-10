@@ -84,6 +84,21 @@ st.plotly_chart(fig_trend)
 # ---- INSIGHTS & RECOMMENDATIONS ----
 st.subheader("🔍 Key Insights & Recommendations")
 st.write("""
+-  **Applications, Admissions, & Enrollments:** 
+    The conversion rate from applications → admitted → enrolled students can indicate the selectivity and attractiveness of the university.
+    If applications increase but enrollments decline, it might indicate admissions policies need review, or students are choosing other universities.
+- **Retention Rate Trends Over Time:**
+    If retention rates are increasing, it suggests improved student support and engagement.
+    If retention rates drop in specific years, it could indicate academic difficulty, dissatisfaction, or external factors (e.g., pandemic impact).
+- **Student Satisfaction Over Time:**
+    A steady or increasing satisfaction level means students are happy with academics, facilities, and campus life.
+    A drop in satisfaction might indicate problems like overcrowded classes, faculty issues, or poor student services.
+- **Enrollment Breakdown by Department:**
+    Engineering and Business enrollments may be growing, indicating higher demand for these fields.
+    If Arts and Science enrollments are declining, it could signal lower student interest or fewer job opportunities.
+- **Enrollment Comparison: Spring vs. Fall:**
+    If Fall enrollments are much higher than Spring, it indicates the main intake is Fall, and Spring admissions may be limited.
+    If Spring enrollment is rising, the university might need more faculty and resources for Spring classes.
 - **Retention Rate & Student Satisfaction:** Strong correlation suggests retention strategies impact satisfaction.
 - **Departmental Trends:** Engineering & Business enrollments are increasing, while Arts & Science fluctuate.
 - **Spring vs. Fall Enrollment:** One term may have higher enrollments, indicating potential policy adjustments.
