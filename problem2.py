@@ -11,6 +11,10 @@ def load_data():
 
 df = load_data()
 
+df.columns = df.columns.str.strip()  # Removes extra spaces
+
+st.write("Columns in CSV:", df.columns.tolist())
+
 # Sidebar filters
 st.sidebar.header("Filters")
 selected_term = st.sidebar.selectbox("Select Term", df["Term"].unique())
@@ -26,7 +30,7 @@ st.title("University Admissions & Student Satisfaction Dashboard")
 st.subheader("Applications, Admissions & Enrollments")
 col1, col2, col3 = st.columns(3)
 col1.metric("Total Applications", filtered_df["Applications"].sum())
-col2.metric("Total Admissions", filtered_df["Admissions"].sum())
+col2.metric("Total Admissions", filtered_df["Admitted"].sum())  
 col3.metric("Total Enrollments", filtered_df["Enrollments"].sum())
 
 # Retention Rate Trend
