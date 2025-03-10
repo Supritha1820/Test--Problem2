@@ -1,61 +1,93 @@
 import streamlit as st
 import pandas as pd
-import plotly.graph_objects as go
 import plotly.express as px
 
-# Load data
-@st.cache
-def load_data():
-    df = pd.read_csv("university_student_dashboard_data.csv")
-    return df
+# Load the data
+df = pd.read_csv("university_student_dashboard_data.csv")
 
-df = load_data()
+# Strip spaces from column names
+df.columns = df.columns.str.strip()
 
-df.columns = df.columns.str.strip()  # Removes extra spaces
-
-st.write("Columns in CSV:", df.columns.tolist())
+# Convert "Year" to string to avoid issues with categorical plotting
+df["Year"] = df["Year"].astype(str)
 
 # Sidebar filters
-st.sidebar.header("Filters")
-selected_term = st.sidebar.selectbox("Select Term", df["Term"].unique())
-selected_year = st.sidebar.slider("Select Year", int(df["Year"].min()), int(df["Year"].max()), int(df["Year"].max()))
+st.sidebar.header("Filter Options")
+selected_years = st.sidebar.multiselect("Select Year", df["Year"].unique(), default=df["Year"].unique())
+selected_terms = st.sidebar.multiselect("Select Term", df["Term"].unique(), default=df["Term"].unique())
 
-# Filtering data
-filtered_df = df[(df["Term"] == selected_term) & (df["Year"] == selected_year)]
+# Filter data based on user selection
+filtered_df = df[(df["Year"].isin(selected_years)) & (df["Term"].isin(selected_terms))]
 
-# Main dashboard
-st.title("University Admissions & Student Satisfaction Dashboard")
+# Dashboard Title
+st.title("🎓 University Admissions & Student Satisfaction Dashboard")
 
-# Applications, Admissions & Enrollment
+# Key Metrics
 st.subheader("Applications, Admissions & Enrollments")
 col1, col2, col3 = st.columns(3)
 col1.metric("Total Applications", filtered_df["Applications"].sum())
-col2.metric("Total Admissions", filtered_df["Admitted"].sum())  
-col3.metric("Total Enrollments", filtered_df["Enrollments"].sum())
+col2.metric("Total Admitted", filtered_df["Admitted"].sum())  # Fixed column name
+col3.metric("Total Enrolled", filtered_df["Enrolled"].sum())
 
 # Retention Rate Trend
-st.subheader("Retention Rate Over Time")
-retention_trend = df.groupby("Year")["Retention Rate"].mean().reset_index()
-fig_retention = px.line(retention_trend, x="Year", y="Retention Rate", markers=True, title="Retention Rate Trend")
+st.subheader("📊 Retention Rate Over the Years")
+fig_retention = px.line(
+    df,
+    x="Year",
+    y="Retention Rate (%)",
+    color="Term",
+    markers=True,
+    title="Retention Rate Trend"
+)
 st.plotly_chart(fig_retention)
 
 # Student Satisfaction Trend
-st.subheader("Student Satisfaction Over Years")
-satisfaction_trend = df.groupby("Year")["Satisfaction Score"].mean().reset_index()
-fig_satisfaction = px.line(satisfaction_trend, x="Year", y="Satisfaction Score", markers=True, title="Satisfaction Score Trend")
+st.subheader("😊 Student Satisfaction Over the Years")
+fig_satisfaction = px.line(
+    df,
+    x="Year",
+    y="Student Satisfaction (%)",
+    color="Term",
+    markers=True,
+    title="Student Satisfaction Trend"
+)
 st.plotly_chart(fig_satisfaction)
 
 # Enrollment Breakdown by Department
-st.subheader("Enrollment Breakdown by Department")
-enrollment_by_dept = filtered_df.groupby("Department")["Enrollments"].sum().reset_index()
-fig_dept = px.bar(enrollment_by_dept, x="Department", y="Enrollments", title="Enrollment by Department")
+st.subheader("📚 Enrollment Breakdown by Department")
+dept_columns = ["Engineering Enrolled", "Business Enrolled", "Arts Enrolled", "Science Enrolled"]
+df_dept = filtered_df.melt(id_vars=["Year", "Term"], value_vars=dept_columns, var_name="Department", value_name="Enrollment")
+
+fig_dept = px.bar(
+    df_dept,
+    x="Year",
+    y="Enrollment",
+    color="Department",
+    barmode="group",
+    title="Enrollment by Department"
+)
 st.plotly_chart(fig_dept)
 
-# Spring vs Fall Trends
-st.subheader("Spring vs. Fall Term Comparison")
-term_comparison = df.groupby(["Term", "Year"])[["Enrollments", "Retention Rate", "Satisfaction Score"]].mean().reset_index()
-fig_term = px.line(term_comparison, x="Year", y=["Enrollments", "Retention Rate", "Satisfaction Score"], color="Term", markers=True, title="Spring vs Fall Trends")
-st.plotly_chart(fig_term)
+# Spring vs. Fall Comparison
+st.subheader("🌱 Spring vs. 🍂 Fall Enrollment Trends")
+fig_term_comparison = px.bar(
+    df,
+    x="Year",
+    y="Enrolled",
+    color="Term",
+    barmode="group",
+    title="Enrollment Comparison: Spring vs. Fall"
+)
+st.plotly_chart(fig_term_comparison)
 
+# Insights
+st.subheader("🔍 Key Insights & Recommendations")
+st.write("""
+- The retention rate has **increased/decreased** over the years. Consider implementing student engagement programs.
+- Student satisfaction is **trending upwards/downwards**, possibly indicating areas for improvement.
+- Enrollment in **Engineering/Business/Arts/Science** is experiencing growth/decline, suggesting shifts in student interest.
+- Spring vs. Fall trends show **higher/lower** enrollment in certain terms. Consider optimizing admission strategies.
+""")
 
-
+# Footer
+st.markdown("**📌 Data Source: University Records**")
