@@ -56,6 +56,11 @@ fig_dept = px.line(df_dept, x="Year", y="Enrollment", color="Department", marker
                    title="Departmental Enrollment Trends")
 st.plotly_chart(fig_dept)
 
+# ---- Spring vs. Fall Enrollment Comparison ----
+st.subheader("🌱 Spring vs. 🍂 Fall Enrollment Trends")
+fig_term_comparison = px.bar(df, x="Year", y="Enrolled", color="Term", barmode="group", title="Enrollment: Spring vs. Fall")
+st.plotly_chart(fig_term_comparison)
+
 # ---- RETENTION VS. SATISFACTION ----
 st.subheader("📊 Retention Rate vs. Student Satisfaction")
 fig_compare = px.scatter(filtered_df, x="Retention Rate (%)", y="Student Satisfaction (%)", 
